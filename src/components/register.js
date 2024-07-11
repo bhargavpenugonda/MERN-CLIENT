@@ -1,86 +1,81 @@
-import React, { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 
 export default function Register() {
-  const [formData, setForm] = useState({
+  const [formdata, setForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
-  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setForm((prevFormData) => ({
-      ...prevFormData,
-      [id]: value
-    }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const [res, setRes] = useState("");
 
+  const HandleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
     try {
-      const response = await axios.post("http://localhost:3001/users/create", formData);
-      console.log("Form data submitted successfully!", response.data);
-      setForm({
-        name: "",
-        email: "",
-        password: ""
-      });
+      const response = await axios.post("http://localhost:3001/users/register", formdata);
+      console.log("Form data submitted successfully!", response);
+      setForm({ name: "", email: "", password: "" });
+      setRes("User Registered Successfully !");
     } catch (error) {
-      setError(error.message);
+      console.error("Error submitting form:", error);
     }
   };
 
   return (
-    <form className="flex flex-col w-full max-w-md p-4 mx-auto my-8 bg-orange rounded-md shadow-md" onSubmit={handleSubmit}>
-      <h1 className="text-3xl font-bold mb-4">Register Here!</h1>
-      <div className="form-group mb-4">
-        <label htmlFor="name" className="text-sm block mb-1">Name</label>
+    <form className="flex w-200 flex-col items-center p-4 bg-black-100 border border-blue-300 rounded-lg p-3 m-4">
+      <h1 className="font-bold text-lg mb-4">Register Here!</h1>
+      <h5 className="text-red-600">{res}</h5>
+      <div className="form-group flex flex-col w-200 mb-4">
+        <label htmlFor="username" className="text-sm mb-2">
+          Name
+        </label>
         <input
-          type="text"
+          className="border border-gray-300 p-2 rounded"
           id="name"
-          value={formData.name}
-          className="w-full p-2 pl-10 text-sm text-gray-700 border-1 border-gray-300 rounded-md"
+          name="name"
+          type="text"
+          value={formdata.name}
           onChange={handleChange}
           placeholder="Enter your name"
-          required
         />
-      </div>
-      <div className="form-group mb-4">
-        <label htmlFor="email" className="text-sm block mb-1">Email</label>
+        <label htmlFor="email" className="text-sm mb-2">
+          Email
+        </label>
         <input
-          type="email"
+          className="border border-gray-300 p-2 rounded"
           id="email"
-          value={formData.email}
-          className="w-full p-2 pl-10 text-sm text-gray-700 border-1 border-gray-300 rounded-md"
+          type="email"
+          name="email"
+          value={formdata.email}
           onChange={handleChange}
-          placeholder="Enter your email"
-          required
+          placeholder="Enter your Email"
         />
-      </div>
-      <div className="form-group mb-4">
-        <label htmlFor="password" className="text-sm block mb-1">Password</label>
+        <label htmlFor="password" className="text-sm mb-2">
+          Password
+        </label>
         <input
-          type="password"
+          className="border border-gray-300 p-2 rounded"
           id="password"
-          value={formData.password}
-          className="w-full p-2 pl-10 text-sm text-gray-700 border-1 border-gray-300 rounded-md"
+          type="password"
+          name="password"
+          value={formdata.password}
           onChange={handleChange}
           placeholder="Enter your password"
-          required
         />
+        <button
+          type="submit"
+          onClick={(e) => HandleSubmit(e)}
+          className="bg-blue-500 p-1 m-3 w-30 text-white border-gray-300 p-2 rounded"
+        >
+          Submit
+        </button>
       </div>
-
-      {error && <div className="text-red-500">{error}</div>}
-
-      <button
-        type="submit" onClick={handleSubmit}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md"
-      >
-        Submit
-      </button>
     </form>
   );
 }
